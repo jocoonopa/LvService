@@ -235,6 +235,6 @@ export default class Service
 
     static offsetToPage(offset, limit)
     {
-        return _.isEqual(Number(offset), 0) ? 1 : (Math.floor(offet/limit) + 1)
+        return _.isEqual(Number(offset), 0) ? 1 : (Math.floor(offset/limit) + 1)
     }
 }
