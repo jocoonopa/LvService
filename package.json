@@ -1,7 +1,7 @@
 {
   "name": "lvservice",
   "author": "jocoonopa",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve --open",
