@@ -1,12 +1,23 @@
 {
   "name": "lvservice",
-  "version": "0.1.0",
+  "author": "jocoonopa",
+  "version": "0.1.2",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jocoonopa/LvService.git"
+  },
+  "keywords": [
+    "laravel", "vue"
+  ],
+  "files": [
+    "src"
+  ],
   "dependencies": {
     "es6-promise": "^4.2.4",
     "lodash": "^4.17.5",
@@ -30,6 +41,7 @@
       "eslint:recommended"
     ]
   },
+  "module": "src/index.js",
   "postcss": {
     "plugins": {
       "autoprefixer": {}
