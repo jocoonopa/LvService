@@ -3,7 +3,7 @@ export default class Service
     static get status()
     {
         return {
-            none: 0,
+            none: 999,
             executed: 1,
             completed: 2,
         }
@@ -12,6 +12,7 @@ export default class Service
     static get httpStatusMap()
     {
         return {
+            '999': '客戶端程式發生問題',
             '400': '伺服器不能或不會處理該請求',
             '401': '您的登入憑證已經過期，請重新登入系統',
             '403': '您沒有權限進行此項操作',
@@ -24,29 +25,25 @@ export default class Service
         }
     }
 
-    static getConvertErrorMessage(error)
+    static getErrorMessage(error, isForceOrigin = false)
     {
         if (_.isNil(error)) {
             return null
         }
 
-        if (
-            !_.isNil(error.data.error.response) && 
-            !_.isNil(error.data.error.response.data.message) &&
-            !_.isEqual('', error.data.error.response.data.message)
-        ) {
-            return error.data.error.response.data.message
-        }
-
-        if (!_.isNil(Service.httpStatusMap[Service.getErrorStatusCode(error)])) {
+        if (!isForceOrigin && _.has(Service.httpStatusMap, Service.getErrorStatusCode(error))) {
             return Service.httpStatusMap[Service.getErrorStatusCode(error)]
         }
 
-        if (!_.isNil(error.data.message) && !_.isEqual('', error.data.message)) {
-            return error.data.message
+        if (!_.has(error, 'message')) {
+            return '發生錯誤'
+        }
+        
+        if (_.isEmpty(error.message)) {
+            return '發生錯誤'
         }
 
-        return '發生錯誤'
+        return error.message
     }
 
     static fetchedSchema()
@@ -118,9 +115,9 @@ export default class Service
     static successHandle(res, { resolve, reject }, { successCommit, failCommit })
     {
         if (res.data.error) {
-            failCommit(res)
+            failCommit(res.data.error)
 
-            return reject(res)
+            return reject(res.data.error)
         }
 
         successCommit(res)
@@ -130,12 +127,7 @@ export default class Service
 
     static failHandle(error, { resolve, reject }, { successCommit, failCommit })
     {
-        failCommit({
-            data: {
-                message: _.isNil(error.message) ? 'Woops! Error occurs!' : error.message,
-                error,
-            },
-        })
+        failCommit(error)
 
         return reject(error)
     }
@@ -189,10 +181,7 @@ export default class Service
 
     static isErrorhHasResponse(error) 
     {
-        return !_.isNil(error)
-            && !_.isNil(error.data)
-            && !_.isNil(error.data.error)
-            && !_.isNil(error.data.error.response)
+        return error && _.has(error, 'response')
     }
 
     static getResponseFromError(error)
@@ -206,14 +195,11 @@ export default class Service
 
     static getErrorStatusCode(error)
     {
-        if (Service.isErrorhHasResponse(error)) {
-            return Service.getResponseFromError(error).status
+        if (!_.has(error, 'response.status')) {
+            return 999
         }
-    }
 
-    static getErrorMessage(error)
-    {
-        return error.data.message
+        return error.response.status
     }
 
     static isUnprocessableEntityResponse(error)
