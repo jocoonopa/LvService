@@ -43,8 +43,6 @@ export default class Service
         }
 
         if (!_.isNil(error.data.message) && !_.isEqual('', error.data.message)) {
-            console.error(error)
-            console.error(error.data)
             return error.data.message
         }
 
